@@ -1,1 +1,3 @@
-# KGQA_using_KG_Construction_Data
+# KGQA using KG Construction Data
+
+Code and models coming soon.
