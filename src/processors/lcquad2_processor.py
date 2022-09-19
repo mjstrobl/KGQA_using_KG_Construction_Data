@@ -253,9 +253,30 @@ for filename in ["train", "test"]:
                         process(labels, rs, parts, wikidata_entities, nnqt_entities, question, all_samples, sparql_wikidata)
                         process(labels, rs, parts, wikidata_entities, nnqt_entities, paraphrased_question, all_samples, sparql_wikidata)
 
-    with open('data/lcquad2_' + filename + '.json', 'w') as f:
+    with open('data/lcquad2_' + filename + '_all.json', 'w') as f:
         for o in all_samples:
             d = {"sentence1": o[0], "sentence2":"", "label":o[1]}
             f.write(json.dumps(d) + "\n")
+
+    if filename == 'train':
+        random.seed(10)
+        random.shuffle(all_samples)
+    
+        num_labels = [10, 25, 50, 100]
+        for num in num_labels:
+            current = {}
+            with open('data/lcquad2_train_' + str(num) + '.json', 'w') as f:
+                for o in all_samples:
+                    label = o[1]
+                    if label not in current:
+                        current[label] = 0
+    
+                    if current[label] < num:
+                        current[label] += 1
+                    else:
+                        continue
+    
+                    d = {"sentence1": o[0], "sentence2": "", "label": o[1]}
+                    f.write(json.dumps(d) + "\n")
 
 

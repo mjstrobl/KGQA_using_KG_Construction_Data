@@ -1,6 +1,7 @@
 import json
 import re
 import glob, os
+import random
 
 RELATIONS = {"www.freebase.com/people/person/place_of_birth":0,
              "www.freebase.com/people/person/nationality":1,
@@ -60,8 +61,28 @@ for filename in ["test", "train", "valid"]:
                         question = question.replace("</e1>", "</e2>")
                     results.append({"sentence1": question, "sentence2": "", "label": 4})
 
-    with open('data/simple_' + filename + '.json', 'w') as f:
+    with open('data/simple_' + filename + '_all.json', 'w') as f:
         for o in results:
             f.write(json.dumps(o) + "\n")
+
+    if filename == 'train':
+        random.seed(10)
+        random.shuffle(results)
+
+        num_labels = [10, 25, 50, 100]
+        for num in num_labels:
+            current = {}
+            with open('data/simple_train_' + str(num) + '.json', 'w') as f:
+                for o in results:
+                    label = o["label"]
+                    if label not in current:
+                        current[label] = 0
+
+                    if current[label] < num:
+                        current[label] += 1
+                    else:
+                        continue
+
+                    f.write(json.dumps(o) + "\n")
 
 
